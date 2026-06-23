@@ -1,0 +1,56 @@
+services:
+
+  # --- БАЗА ДАННЫХ ---
+  db:
+    image: mysql:8.0 
+    container_name: todo_db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: todo_db
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_USER: todo_user
+      MYSQL_PASSWORD: todo_password
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - todo_network
+
+  # --- БЭКЕНД (Laravel) ---
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: todo_backend
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - ./backend:/var/www
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    networks:
+      - todo_network
+
+  # --- ФРОНТЕНД (Vue) ---
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: todo_frontend
+    restart: unless-stopped
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "5173:5173"
+    networks:
+      - todo_network
+
+volumes:
+  db_data:
+
+networks:
+  todo_network:
+    driver: bridge
