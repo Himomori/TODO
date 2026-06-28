@@ -10,7 +10,10 @@ class TodoController extends Controller
 {
     public function index(): JsonResponse
     {
-        $todos = Todo::orderBy('created_at', 'desc')->get();
+        $todos = Todo::orderBy('completed')
+            ->orderByRaw("FIELD(priority, 'high', 'medium', 'low')")
+            ->orderBy('created_at', 'desc')
+            ->get();
         return response()->json($todos);
     }
 
@@ -18,12 +21,13 @@ class TodoController extends Controller
     {
         $request->validate([
             'title' => 'required|string|max:255',
+            'priority' => 'sometimes|in:high,medium,low',
         ]);
 
-        $todo = Todo::create([
-            'title' => $request->title,
-            'completed' => false,
-        ]);
+        $todo = Todo::create(array_merge(
+            $validated,
+            ['completed' => false]
+        ));
 
         return response()->json($todo, 201);
     }
@@ -33,9 +37,10 @@ class TodoController extends Controller
         $request->validate([
             'title'     => 'sometimes|string|max:255',
             'completed' => 'sometimes|boolean',
+            'priority' => 'sometimes|in:high,medium,low',
         ]);
 
-        $todo->update($request->only(['title', 'completed']));
+        $todo->update($validated);
 
         return response()->json($todo);
     }
