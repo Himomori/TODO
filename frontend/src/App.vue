@@ -20,12 +20,12 @@ body {
   font-family: 'Segoe UI', sans-serif;
   background: #f0f2f5;
   min-height: 100vh;
+  padding: 20px;
 }
 
 .app {
-  max-width: 600px;
-  margin: 40px auto;
-  padding: 0 20px;
+  max-width: 700px;
+  margin: 0 auto;
 }
 
 h1 {
