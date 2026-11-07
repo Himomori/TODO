@@ -30,7 +30,7 @@ todo-app/
 
 ```bash
 git clone <repository-url>
-cd todo-app
+cd TODO
 ```
 
 ### 2. Запустите контейнеры
@@ -39,7 +39,19 @@ cd todo-app
 docker compose up -d --build
 ```
 
-### 3. Выполните миграции базы данных
+### 3. Создайте файл .env в папке backend и скопируйте пример конфигурации .env_example в .env:
+
+```bash
+cp .env_example .env
+```
+
+### 4. Генерация ключа laravel
+
+```bash
+docker compose exec backend php artisan key:generate
+```
+
+### 5. Выполните миграции базы данных
 
 ```bash
 docker compose exec backend php artisan migrate
@@ -93,6 +105,12 @@ docker compose down
 
 ```bash
 docker compose logs -f
+```
+
+Генерация ключа:
+
+```bash
+docker compose exec backend php artisan key:generate
 ```
 
 Выполнение миграций:
